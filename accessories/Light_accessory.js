@@ -7,22 +7,28 @@ var uuid = require('../').uuid;
 var relayPin = 16; //Physical Pin Number for the relay you wish to be able to use. Change as you desire...
 
 var LightController = {
-  name: "Raspberry Light", //name of accessory
+  name: "LED", //name of accessory
   pincode: "031-45-154",
   username: "1A:2A:3A:4A:5A:6A", // MAC like address used by HomeKit to differentiate accessories.
   manufacturer: "HAP-NodeJS", //manufacturer (optional)
   model: "v1.0", //model (optional)
-  serialNumber: "A12S345KGB", //serial number (optional)
+  serialNumber: "lamp", //serial number (optional)
 
   power: false, //curent power status
 
-  outputLogs: false, //output logs
+  outputLogs: true, //output logs
 
   setPower: function(status) { //set power of accessory
     if(this.outputLogs) console.log("Turning the '%s' %s", this.name, status ? "on" : "off");
     this.power = status;
-    if(status) cmd.run('sudo python /home/pi/HAP-NodeJS/python/light1.py ' + relayPin);
-    else cmd.run('sudo python /home/pi/HAP-NodeJS/python/light0.py ' + relayPin);
+    if(status){ 
+		cmd.run('sudo python /home/pi/HAP-NodeJS/python/light1.py ' + relayPin);
+		console.log("magic on");
+		}
+    else {
+		cmd.run('sudo python /home/pi/HAP-NodeJS/python/light0.py ' + relayPin);
+		console.log("magic off");
+		}
   },
 
   getPower: function() { //get power of accessory
