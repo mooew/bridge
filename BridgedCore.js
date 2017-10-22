@@ -36,3 +36,6 @@ bridge.publish({
   pincode: "031-45-154",
   category: Accessory.Categories.BRIDGE
 });
+
+//start knx
+require('./bridge/knx/app');
