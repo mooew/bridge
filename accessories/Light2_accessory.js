@@ -9,12 +9,12 @@ var bus = require('../bridge/bridgeKNX');
 var relayPin = 18; //Physical Pin Number for the relay you wish to be able to use. Change as you desire...
 
 var LightController = {
-  name: "lamp", //name of accessory
+  name: "LED", //name of accessory
   pincode: "031-45-154",
   username: "1B:2B:3B:4B:5B:6B", // MAC like address used by HomeKit to differentiate accessories.
   manufacturer: "HAP-NodeJS", //manufacturer (optional)
   model: "v1.0", //model (optional)
-  serialNumber: "lamp tafel", //serial number (optional)
+  serialNumber: "LED", //serial number (optional)
 
   power: false, //curent power status
 
@@ -26,12 +26,12 @@ var LightController = {
     if(status){
 		cmd.run('sudo python /home/pi/HAP-NodeJS/python/light1.py ' + relayPin);
 		console.log("magic on");
-    bus.KNXevent.emit('switchOn');
+    bus.KNXevent.emit('switchOn_light2');
 		}
     else {
 		cmd.run('sudo python /home/pi/HAP-NodeJS/python/light0.py ' + relayPin);
 		console.log("magic off");
-    bus.KNXevent.emit('switchOff');
+    bus.KNXevent.emit('switchOff_light2');
 		}
   },
 

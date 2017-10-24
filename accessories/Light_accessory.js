@@ -1,4 +1,4 @@
-
+//
 var cmd = require('node-cmd');
 var Accessory = require('../').Accessory;
 var Service = require('../').Service;
@@ -9,14 +9,16 @@ var bus = require('../bridge/bridgeKNX');
 var relayPin = 16; //Physical Pin Number for the relay you wish to be able to use. Change as you desire...
 
 var LightController = {
-  name: "LED", //name of accessory
+  name: "Lamp zetel", //name of accessory
   pincode: "031-45-154",
   username: "1A:2A:3A:4A:5A:6A", // MAC like address used by HomeKit to differentiate accessories.
+
   manufacturer: "HAP-NodeJS", //manufacturer (optional)
   model: "v1.0", //model (optional)
-  serialNumber: "lamp", //serial number (optional)
+  serialNumber: "lamp zetel", //serial number (optional)
 
   power: false, //curent power status
+  brightness: 100, //current brightness fon't care first time startup
 
   outputLogs: true, //output logs
 
@@ -35,10 +37,24 @@ var LightController = {
 		}
   },
 
-  getPower: function() { //get power of accessory
+  getPower: function() { //get power of accessory from intern homekit
     if(this.outputLogs) console.log("'%s' is %s.", this.name, this.power ? "on" : "off");
-    return this.power ? true : false;
+    return this.power ? true : false;     //bij openen van control panel wordt verkeerde waarde geupdated!!!
   },
+
+// /*
+  setBrightness: function(brightness) { //set brightness
+    if(this.outputLogs) console.log("Setting '%s' brightness to %s", this.name, brightness);
+    this.brightness = brightness;
+    bus.KNXevent.emit('value', brightness);
+  },
+
+  getBrightness: function() { //get brightness
+    if(this.outputLogs) console.log("'%s' brightness is %s", this.name, this.brightness);
+    return this.brightness;
+    },
+
+// */
 
   identify: function() { //identify the accessory
     if(this.outputLogs) console.log("Identify the '%s'", this.name);
@@ -78,3 +94,35 @@ lightAccessory
   .on('get', function(callback) {
     callback(null, LightController.getPower());
   });
+
+//  /*
+  // To inform HomeKit about changes occurred outside of HomeKit (like user physically turn on the light)
+// Please use Characteristic.updateValue
+
+
+bus.KNXevent.on('update', function(value) {
+console.log(value);
+LightController.power = value;
+  lightAccessory
+     .getService(Service.Lightbulb)
+     .getCharacteristic(Characteristic.On)
+     .updateValue(value);
+     console.log('update ipad');
+
+});
+
+
+
+// also add an "optional" Characteristic for Brightness
+lightAccessory
+  .getService(Service.Lightbulb)
+  .addCharacteristic(Characteristic.Brightness)
+  .on('set', function(value, callback) {
+    LightController.setBrightness(value);
+    callback();
+  })
+  .on('get', function(callback) {
+    callback(null, LightController.getBrightness());
+  });
+
+// */
