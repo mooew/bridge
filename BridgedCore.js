@@ -39,3 +39,4 @@ bridge.publish({
 
 //start knx
 require('./bridge/knx/app');
+require('./utilities/ifttt_log');
